@@ -6,4 +6,4 @@ default: &default
 
 development:
   <<: *default
-  database: solid_app_rails_development
+  database: video_call_app_rails_development

@@ -1,0 +1,27 @@
+<div style= "margin-top: 80px;">
+  <div>
+    <a href="/meetings/new" class="btn btn-outline-primary" role="button" aria-pressed="true">Create Meeting</a>
+  </div>
+  <h1>Meeting List</h1>
+ <table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Title</th>
+      <th scope="col">User</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @meetings.each do |meeting| %>
+    <tr>
+      <td><%= meeting.id %></td>
+      <td><%= meeting.title %></td>
+      <td><%= User.find(meeting.user_id).email %></td>
+      <td><%= meeting.description %></td>
+    </tr>
+    <% end%>
+  </tbody>
+</table>
+
+</div>
