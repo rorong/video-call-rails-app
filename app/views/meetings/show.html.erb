@@ -1,0 +1,124 @@
+<script src="https://static.opentok.com/v2/js/opentok.min.js"></script>
+
+<div class="video_chat_wrapper">
+  <div class="video_heading">
+  </div>
+  <div class="videos">
+    <div class="publisher" id="publisher"></div>
+    <div class="subscriber" id="subscribers"></div>
+    <%#= render 'video_actions'%>
+  </div>
+</div>
+
+<script type="text/javascript">
+  // declare empty global session variable
+  var subscribers = document.getElementById("subscribers");
+  var api_key = "46789194";
+  var session_id = "<%=@meeting.tokbox_session_id%>";
+  var token = "<%=@token%>";
+  var session = '';
+
+  // reload page to render with variables
+  (function() {
+    if(window.localStorage) {
+      if(!localStorage.getItem('firstLoad')) {
+        localStorage['firstLoad'] = true;
+        window.location.reload();
+    } else
+      localStorage.removeItem('firstLoad');
+    }
+  })();
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize an OpenTok Session object
+    if(session == '') {
+      session = OT.initSession(api_key, session_id);
+    }
+
+    session.on({
+      // This function runs when session.connect() asynchronously completes
+      sessionConnected: function(event) {
+        session.publish(videoPublisher, function(error) {
+          if (error) {
+            console.error('Failed to publish', error);
+          }
+        });
+      },
+
+      // This function runs when another client publishes a stream (eg. session.publish())
+      streamCreated: function(event) {
+        session.subscribe(event.stream, "subscribers", {
+          insertMode: 'append',
+          width: "100%",
+          height: "100%"
+        }, function(error) {
+          if (error) {
+            console.error('Failed to subscribe', error);
+          }else{
+            // if(event.stream.videoType === "video"){
+            //   // Screen/video share subscribed successfully!
+            // }
+          }
+        });
+      },
+
+      sessionDisconnected: function(event){
+        window.location = "<%=meetings_path%>";
+      },
+
+    });
+
+    // Connect to the Session using a 'token'
+    session.connect(token, function(error) {
+      if (error) {
+        if(error.name === 'OT_AUTHENTICATION_ERROR'){
+          alert('Failed to connect: Token Expired');
+        }else{
+          alert('Failed to connect', error.name);
+        }
+        window.location = "<%=meetings_path%>";
+      }
+    });
+
+    //Disconnect to session
+    $('.call_drop_icon').on('click', function(){
+      session.disconnect(event, function(){
+        if (error){
+          console.error('Failed to connect', error);
+        }
+      })
+    });
+
+    // Publisher Audio ON
+    $('.audio-off').click(function(){
+      videoPublisher.publishAudio(true);
+    });
+
+    // Publisher Audio OFF
+    $('.audio-on').click(function(){
+      videoPublisher.publishAudio(false);
+    });
+
+    // Publisher Video ON
+    $('.video-off').click(function(){
+      videoPublisher.publishVideo(true);
+    });
+
+    // Publisher Video OFF
+    $('.video-on').click(function(){
+      videoPublisher.publishVideo(false);
+    });
+
+
+    var videoPublisher = OT.initPublisher('publisher', {
+      insertMode: 'append',
+      width: '100%',
+      height: '100%'
+    }, function(error){
+      if(error){
+        console.error('Failed to initialise publisher', error);
+      };
+    });
+
+  });
+</script>

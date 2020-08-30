@@ -37,7 +37,7 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'devise'
 gem 'devise-bootstrap-views', '~> 1.0'
-
+gem 'opentok', '~> 2.3'
 gem 'bootsnap', '>= 1.1.0', require: false
 
 group :development, :test do

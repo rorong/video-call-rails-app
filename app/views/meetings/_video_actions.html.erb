@@ -1,0 +1,23 @@
+<div class="video_btns_wrap">
+  <!-- Audio ON/OFF -->
+  <%= link_to "javascript:void(0);", class: 'microphone audio-on' do%>
+    <%= image_tag 'microphone.svg'%>
+  <%end%>
+  <%= link_to "javascript:void(0);", class: 'microphone audio-off', style: "display: none;" do%>
+    <%=  image_tag 'microphone_slash.svg'%>
+  <%end%>
+  <!-- Audio ON/OFF -->
+
+  <!-- Video ON/OFF -->
+  <%= link_to "javascript:void(0);", class: "video video-on" do %>
+    <%= image_tag 'video.svg'%>
+  <%end%>
+  <%= link_to "javascript:void(0);", class: "video video-off", style: "display: none;" do %>
+    <%= image_tag 'video_off.svg'%>
+  <%end%>   
+  <!-- Video ON/OFF -->
+
+  <%= link_to "javascript:void(0);", class: 'call_drop_icon' do%>
+    <%= image_tag 'call_icon.svg'%>
+  <%end%>
+</div>
