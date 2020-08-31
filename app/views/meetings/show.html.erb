@@ -3,7 +3,7 @@
 <div class="video_chat_wrapper">
   <div class="videos">
     <div class="publisher" id="publisher"></div>
-    <div class="subscriber" id="subscribers"></div>
+    <div class="subscriber grid4" id="subscribers"></div>
     <%= render 'video_actions'%>
   </div>
 </div>
@@ -63,7 +63,26 @@
       sessionDisconnected: function(event){
         window.location = "<%=meetings_path%>";
       },
-
+      streamPropertyChanged: function(event){
+        if(event.stream.connection.connectionId === session.connection.connectionId){
+          // Handle audio action buttons
+          if(event.stream.hasAudio){
+            $('.audio-off').hide();
+            $('.audio-on').show();
+          }else{
+            $('.audio-on').hide();
+            $('.audio-off').show();
+          }
+          // Handle video action buttons
+          if(event.stream.hasVideo){
+            $('.video-off').hide();
+            $('.video-on').show();
+          }else{
+            $('.video-on').hide();
+            $('.video-off').show();
+          }
+        }
+      }      
     });
 
     // Connect to the Session using a 'token'
@@ -117,17 +136,5 @@
         console.error('Failed to initialise publisher', error);
       };
     });
-
-    // Apply relevant CSS class based on number of streams
-    function streamLayout(element, count) {
-      if (count >= 6) {
-        $('#subscribers').addClass("grid9");
-      } else if (count == 5) {
-        $('#subscribers').removeClass("grid9");
-        $('#subscribers').addClass("grid4");
-      } else if (count < 5) {
-        $('#subscribers').addClass("grid4");
-      }
-    }
   });
 </script>
