@@ -3,8 +3,8 @@
 require 'opentok'
 class OpentokService
   def initialize
-    api_key = "46789194"
-    api_secret = "ed60d1f0c45a8883a7e32bce39951dc597265486"
+    api_key = ENV['TOKBOX_API_KEY']
+    api_secret = ENV['TOKBOX_SECRET_KEY']
     @opentok = OpenTok::OpenTok.new(api_key, api_secret, timeout_length: 10)
   end
 
