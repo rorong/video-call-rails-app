@@ -400,6 +400,8 @@ h1, h2, h3, h4, h5, h6,
 }
 
 h1, .h1 {
+ /* margin-top: 80px;
+  margin-left: 46%;*/
   font-size: 2.5rem;
 }
 
@@ -1572,7 +1574,6 @@ select.form-control-lg:not([size]):not([multiple]), .input-group-lg > select.for
 .form-check-input {
   position: absolute;
   margin-top: 0.25rem;
-  margin-left: -1.25rem;
 }
 
 .form-check-input:only-child {
@@ -7722,4 +7723,23 @@ a.text-dark:focus, a.text-dark:hover {
 
 .invisible {
   visibility: hidden !important;
+}
+
+.new_user{
+  width: 30%;
+    margin-left: 35%;
+}
+.links{
+  width: 30%;
+  margin-left: 35%; 
+}
+
+.create_meeting{
+  right: 144px;
+    top: 76px;
+    position: absolute;
+}
+.login{
+  margin-top: 80px;
+  margin-left: 46%;
 }

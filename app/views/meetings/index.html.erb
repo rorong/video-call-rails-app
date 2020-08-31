@@ -1,28 +1,34 @@
 <div class="container">
   <div style= "margin-top: 80px;">
-    <div>
-      <a href="/meetings/new" class="btn btn-outline-primary" role="button" aria-pressed="true">Create Meeting</a>
+    <div class="create_meeting">
+      <% if current_user.present? %>
+        <a href="/meetings/new" class="btn btn-outline-primary" role="button" aria-pressed="true">Create Meeting</a>
+      <% end %>
     </div>
-    <h1>Meeting List</h1>
-   <table class="table table-hover">
-    <thead>
-      <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Title</th>
-        <th scope="col">User</th>
-        <th scope="col">Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @meetings.each do |meeting| %>
-      <tr>
-        <td><%= meeting.id %></td>
-        <td><%= meeting.title %></td>
-        <td><%= User.find(meeting.user_id).email %></td>
-        <td><%= meeting.description %></td>
-      </tr>
-      <% end%>
-    </tbody>
-  </table>
+    <h2>Meeting List</h2>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Title</th>
+          <th scope="col">User</th>
+          <th scope="col">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @meetings.each do |meeting| %>
+        <tr>
+          <td><%= meeting.id %></td>
+          <td><%= meeting.title %></td>
+          <td><%= User.find(meeting.user_id).email %></td>
+          <td><%= meeting.description %></td>
+          <% if current_user.present? %>
+            <td><%= link_to "Edit", edit_meeting_path(meeting) %></td>
+            <td><%= link_to "Delete", meeting_path(meeting), method: :delete %></td>
+          <% end %>
+        </tr>
+        <% end%>
+      </tbody>
+    </table>
   </div>
 </div>
