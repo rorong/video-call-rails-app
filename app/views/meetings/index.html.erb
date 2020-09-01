@@ -2,7 +2,7 @@
   <div style= "margin-top: 80px;">
     <div class="create_meeting">
       <% if current_user.present? %>
-        <a href="/meetings/new" class="btn btn-outline-primary" role="button" aria-pressed="true">Create Meeting</a>
+        <%=link_to "New Meeting", new_meeting_path, class: 'btn btn-outline-primary'%>
       <% end %>
     </div>
     <h2>Meeting List</h2>
@@ -11,23 +11,27 @@
         <tr>
           <th scope="col">Id</th>
           <th scope="col">Title</th>
-          <th scope="col">User</th>
+          <th scope="col">Meeting User</th>
           <th scope="col">Description</th>
+          <th scope="col">Meeting Link</th>
         </tr>
       </thead>
       <tbody>
-        <% @meetings.each do |meeting| %>
-        <tr>
-          <td><%= meeting.id %></td>
-          <td><%= meeting.title %></td>
-          <td><%= User.find(meeting.user_id).email %></td>
-          <td><%= meeting.description %></td>
-          <% if current_user.present? %>
-            <td><%= link_to "Edit", edit_meeting_path(meeting) %></td>
-            <td><%= link_to "Delete", meeting_path(meeting), method: :delete %></td>
-          <% end %>
-        </tr>
-        <% end%>
+        <%unless @meetings.blank?%>
+          <% @meetings.each do |meeting| %>
+            <tr>
+              <td><%= meeting.id %></td>
+              <td><%= meeting.title %></td>
+              <td><%= meeting&.invitee&.email %></td>
+              <td><%= truncate(meeting.description, length: 50, ommission: "...") %></td>
+              <td><%=link_to "#{meeting_path(meeting)}", meeting_path(meeting)%></td>
+              <% if current_user.present? && current_user.eql?(meeting.user)%>
+                <td><%= link_to "Edit", edit_meeting_path(meeting) %></td>
+                <td><%= link_to "Delete", meeting_path(meeting), method: :delete, data: {confirm: "Are you sure?"} %></td>
+              <% end %>
+            </tr>
+          <% end%>
+        <%end%>
       </tbody>
     </table>
   </div>

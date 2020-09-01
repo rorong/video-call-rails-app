@@ -1,5 +1,6 @@
 class Meeting < ApplicationRecord
   belongs_to :user
+  belongs_to :invitee, class_name: "User", foreign_key: 'invitee_id'
 
   validates_presence_of :tokbox_session_id
   before_validation :generate_opentok_session, if: -> { new_record? }

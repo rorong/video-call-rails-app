@@ -1,8 +1,8 @@
 class MeetingsController < ApplicationController
-   before_action :find_meeting, only: %i[show edit update destroy] 
+  before_action :find_meeting, only: %i[show edit update destroy] 
 
   def index
-    @meetings = Meeting.all.order('created_at DESC')
+    @meetings = Meeting.where("user_id = ? OR invitee_id = ?", current_user.id, current_user.id).order('created_at DESC')
   end
 
   def new
@@ -10,7 +10,7 @@ class MeetingsController < ApplicationController
   end
 
   def create
-    @meeting = Meeting.new(meeting_params)
+    @meeting = current_user.meetings.new(meeting_params)
     if @meeting.save
       redirect_to(meetings_path)
     else
@@ -46,7 +46,7 @@ class MeetingsController < ApplicationController
   private
 
   def meeting_params
-     params.require(:meeting).permit(:title, :description, :user_id)
+     params.require(:meeting).permit(:title, :description, :invitee_id)
   end
 
   def find_meeting
