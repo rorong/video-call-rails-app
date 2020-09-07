@@ -26,4 +26,39 @@ You need to add Gems in gemfile:
 * User 2:  email- "email2@email.com"
         password: "password"
 
+# User signup
 
+<div align="center">
+    <img src="/app/assets/images/meeting_signup.png" width="400px"</img> 
+</div>
+
+# User Login
+
+<div align="center">
+    <img src="/app/assets/images/login_ss.png" width="400px"</img> 
+</div>
+
+# New meeting creation
+
+<div align="center">
+    <img src="/app/assets/images/new_meeting_ss.png" width="400px"</img> 
+</div>
+
+# Meeting lists
+
+<div align="center">
+    <img src="/app/assets/images/meeting_list_ss.png" width="400px"</img> 
+</div>
+
+
+# Meeting confrence(Publisher)
+
+<div align="center">
+    <img src="/app/assets/images/meeting_call_a.png" width="400px"</img> 
+</div>
+
+# Meeting confrence(Subscriber)
+
+<div align="center">
+    <img src="/app/assets/images/meeting_call_b.png" width="400px"</img> 
+</div>
