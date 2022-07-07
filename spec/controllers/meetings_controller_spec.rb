@@ -5,21 +5,31 @@ RSpec.describe MeetingsController, type: :controller do
 
   before { sign_in user }
 
-  let(:meeting) { FactoryGirl.create(:meeting, user_id: subject.current_user.id, invitee_id: subject.current_user.id)}
+  let(:meeting) do
+    create(
+      :meeting, user_id: subject.current_user.id,
+      invitee_id: subject.current_user.id
+    )
+  end
 
-  let(:user) { FactoryGirl.create(:user) }
+  let(:user) { create(:user) }
 
-  let(:valid_attributes) {
-    FactoryGirl.attributes_for(:meeting, title:"M1", description:"",user_id:subject.current_user.id,invitee_id: subject.current_user.id, tokbox_session_id: "kasjhd86asd8asjkjl8")
-  }
+  let(:invitee) { create(:user) }
 
-  let(:invalid_attributes) {
-    FactoryGirl.attributes_for(:meeting, name:'')
-  }
+  let(:valid_attributes) do
+    FactoryGirl.attributes_for(
+      :meeting, title:"M1", description: "test description",
+      user: user, invitee_id: subject.current_user
+    )
+  end
 
-  let(:valid_session) { {} }
+  let(:invalid_attributes) do
+    FactoryGirl.attributes_for(
+      :meeting, title:'', description: ''
+    )
+  end
 
-  describe 'user logged in' do
+  describe 'user authentication' do
     it 'user logged in' do
       expect(subject.current_user).not_to be_nil
     end
@@ -29,91 +39,156 @@ RSpec.describe MeetingsController, type: :controller do
       expect(subject.current_user.id).to be_nil
     end
   end
+
   describe 'GET #index' do
-    it "assigns all meetings as @meetings" do
-      get :index
-      expect(assigns(:meetings)).to eq([meeting])
+    let(:meeting_1) do
+      create(
+        :meeting, user_id: subject.current_user.id,
+        invitee_id: subject.current_user.id
+      )
+    end
+
+    let(:meeting_2) do
+      create(
+        :meeting, user_id: user.id, invitee_id: user.id
+      )
+    end
+
+    before { get :index }
+
+    it 'returns status 200' do
+      expect(response.status).to eq 200
+    end
+
+    it 'assigns meetings that belongs to logged in user' do
+      expect(assigns(:meetings)).to eq([meeting_1])
     end
   end
+
   describe 'GET #new' do
-    it "assigns a new meeting as @meeting" do
-      get :new
+    before { get :new }
+
+    it 'returns status 200' do
+      expect(response.status).to eq 200
+    end
+
+    it 'assigns a new meeting as @meeting' do
       expect(assigns(:meeting)).to be_a_new(Meeting)
     end
   end
-  describe "GET #create" do
-    context "with valid params" do
-      it "creates a new Meeting" do
-        expect {
-          post :create, params: {invitee_id: subject.current_user, meeting: valid_attributes}
-        }.to change(Meeting, :count).by(1)
+
+  describe 'POST #create' do
+    context 'with valid params' do
+      it 'redirects to meetings_path' do
+        post :create, params: {
+          meeting: valid_attributes
+        }
+        expect(response).to redirect_to(meetings_path)
       end
 
-      it "assigns a newly created meeting as @meeting" do
-        post :create, params: {invitee_id:subject.current_user,meeting: valid_attributes}
-        expect(assigns(:meeting)).to be_a(Meeting)
-        expect(assigns(:meeting)).to be_persisted
+      it 'creates a meeting successfully' do
+        expect{
+          post :create, params: { meeting: valid_attributes, invitee: subject.current_user
+          }
+        }.to change(Meeting, :count).by(1)
       end
     end
 
-    context "with invalid params" do
-      it "assigns a newly created but unsaved course as @course" do
-        post :create, params: { meeting: invalid_attributes}
-        expect(assigns(:meeting)).to be_a_new(Meeting)
+    context 'with invalid params' do
+      before do
+        post :create, params: { meeting: invalid_attributes }
       end
 
-      it "re-renders the 'new' template" do
-        post :create, params: { meeting: invalid_attributes}
+      it 'renders new meeting template' do
         expect(response).to render_template('new')
       end
     end
   end
 
-  describe "PUT #update" do
-    context "with valid params" do
-      let(:new_attributes) {
-        FactoryGirl.attributes_for(:meeting, title:"M2", description:"",user_id: subject.current_user.id,invitee_id: subject.current_user.id, tokbox_session_id: "kasjhd86asd8asjkjl8")
-      }
-
-      it "updates the requested meeting" do
-      	meeting = Meeting.create! valid_attributes
-        patch :update, params: {id: meeting.id, meeting: new_attributes}
-        meeting.reload
-        expect(assigns(:meeting)).to eq(meeting)
+  describe 'PUT #update' do
+    context 'with valid params' do
+      let(:new_attributes) do
+        FactoryGirl.attributes_for(
+          :meeting, title: "M2", description: "test desc",
+          user: subject.current_user, invitee: subject.current_user
+        )
       end
 
-      it "assigns the requested meeting as @meeting" do
-      	meeting = Meeting.create! valid_attributes
-        put :update, params: {id: meeting.id, meeting: valid_attributes}
-        expect(assigns(:meeting)).to eq(meeting)
+      before do
+        @meeting = create(:meeting, user: subject.current_user,
+                   invitee: subject.current_user)
+        patch :update, params: {
+          id: @meeting.id, meeting: new_attributes
+        }
+        @meeting.reload
       end
 
-      it "redirects to the meeting" do
-        meeting = Meeting.create! valid_attributes
-        put :update, params: {id: meeting.id, meeting: valid_attributes}
-        expect(response).to redirect_to(meeting_path)
+      it 'updates the title' do
+        expect(@meeting.title).to eq('M2')
+      end
+
+      it 'updates the description' do
+        expect(@meeting.description).to eq('test desc')
+      end
+
+      it 'redirects to meeting_path(meeting)' do
+        expect(response).to redirect_to(meeting_path(@meeting))
       end
     end
 
-    context "with invalid params" do
-      it "assigns the meeting as @meeting" do
-        meeting = Meeting.create! valid_attributes
-        put :update, params: { id: meeting.id, meeting: invalid_attributes }
-        expect(assigns(:meeting)).to eq(meeting)
+    context 'with invalid params' do
+      let(:new_attributes) do
+        FactoryGirl.attributes_for(
+          :meeting, title: "M2", description: "test desc"
+        )
+      end
+
+      before do
+        @meeting = create(:meeting, user: subject.current_user, invitee: subject.current_user)
+        patch :update, params: {
+          id: @meeting.id, meeting: new_attributes
+        }
+        @meeting.reload
+      end
+
+      it 'redirects to meetings_path' do
+        expect(response).to redirect_to(meeting_path(@meeting))
       end
     end
   end
 
-  describe "DELETE #destroy" do
-    it "destroys the requested course" do
-      meeting = Meeting.create! valid_attributes
-      expect {
+  describe 'GET #show' do
+    context 'when show successfull' do
+      let(:meeting) do
+        create(:meeting, user: subject.current_user,
+          invitee: subject.current_user
+        )
+      end
+
+      before do
+        get :show, params: { id: meeting.id }
+      end
+
+      it 'return 200 http status code' do
+        expect(response.status).to eq 200
+      end
+
+      it 're-renders show template' do
+        expect(response).to render_template(:show)
+      end
+    end
+  end
+
+  describe 'DELETE #destroy' do
+    it 'destroys the requested course' do
+      meeting = create(:meeting, user: user, invitee: invitee)
+      expect{
         delete :destroy, params: { id: meeting.id }
       }.to change(Meeting, :count).by(-1)
     end
 
-    it "redirects to the meetings list" do
-      meeting = Meeting.create! valid_attributes
+    it 'redirects to the meetings list when destroy' do
+      meeting = create(:meeting, user: user, invitee: invitee)
       delete :destroy, params: { id: meeting.id }
       expect(response).to redirect_to(meetings_url)
     end

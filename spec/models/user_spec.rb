@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
 
-  subject { FactoryGirl.create(:user) }
+  subject { create(:user) }
 
   it { is_expected.to have_many(:meetings) }
 
@@ -21,6 +21,7 @@ RSpec.describe User, type: :model do
 
     context 'when email is duplicated' do
       let(:user) { User.create }
+
       before { subject.email = user.email }
 
       it { is_expected.not_to be_valid }
@@ -29,6 +30,7 @@ RSpec.describe User, type: :model do
 
   describe '#destroy' do
     let!(:user) { FactoryGirl.create(:user) }
+
     it 'should destroy user' do
       expect { user.destroy }.to change(User, :count).by(-1)
     end

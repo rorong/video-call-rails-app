@@ -12,7 +12,7 @@ class MeetingsController < ApplicationController
   def create
     @meeting = current_user.meetings.new(meeting_params)
     if @meeting.save
-      redirect_to(root_path)
+      redirect_to(meetings_path)
     else
       render(:new)
     end
@@ -47,7 +47,7 @@ class MeetingsController < ApplicationController
   private
 
   def meeting_params
-     params.require(:meeting).permit(:title, :description, :invitee_id, :tokbox_session_id)
+     params.require(:meeting).permit(:title, :description, :invitee_id)
   end
 
   def find_meeting
