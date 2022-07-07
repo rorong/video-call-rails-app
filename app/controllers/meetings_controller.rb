@@ -25,11 +25,12 @@ class MeetingsController < ApplicationController
     end
   end
 
-  def edit;  end
+  def edit
+  end
 
   def update
     if @meeting.update(meeting_params)
-      redirect_to(meetings_path)
+      redirect_to(meeting_path)
     else
       render(:edit)
     end
