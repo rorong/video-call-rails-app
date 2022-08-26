@@ -7,7 +7,7 @@ class MeetingsController < ApplicationController
 
   def new
     @meeting = Meeting.new
-  end
+  end 
 
   def create
     @meeting = current_user.meetings.new(meeting_params)
